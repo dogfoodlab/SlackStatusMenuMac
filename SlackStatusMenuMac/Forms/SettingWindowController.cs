@@ -24,6 +24,8 @@ namespace SlackStatusMenuMac.Forms
         {
             base.AwakeFromNib();
 
+            Window.Level = NSWindowLevel.Floating;
+
             var tokens = Slack.TokenUtil.LoadTokens();
 
             var text = string.Join("\n", tokens) + "\n";
