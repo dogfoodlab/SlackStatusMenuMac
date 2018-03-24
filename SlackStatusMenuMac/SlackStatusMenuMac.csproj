@@ -70,6 +70,7 @@
   <ItemGroup>
     <Folder Include="Resources\" />
     <Folder Include="Slack\" />
+    <Folder Include="Forms\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -89,10 +90,19 @@
     <Compile Include="Slack\GroupsInfoResult.cs" />
     <Compile Include="Slack\GroupsListResult.cs" />
     <Compile Include="Slack\Client.cs" />
+    <Compile Include="Forms\SettingWindow.cs" />
+    <Compile Include="Forms\SettingWindow.designer.cs">
+      <DependentUpon>SettingWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SettingWindowController.cs" />
+    <Compile Include="Forms\SettingWindowController.designer.cs">
+      <DependentUpon>SettingWindowController.cs</DependentUpon>
+    </Compile>
     <Compile Include="Slack\TokenUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
+    <InterfaceDefinition Include="Forms\SettingWindow.xib" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\slack_0.png" />
