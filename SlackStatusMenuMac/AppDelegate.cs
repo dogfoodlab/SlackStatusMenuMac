@@ -1,10 +1,8 @@
 ﻿using AppKit;
 using Foundation;
-using Security;
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace SlackStatusMenuMac
 {
@@ -15,10 +13,7 @@ namespace SlackStatusMenuMac
         NSImage slack0 = new NSImage("slack_0.png");
         NSImage slack1 = new NSImage("slack_1.png");
 
-        long count = 0;
         System.Timers.Timer timer = new System.Timers.Timer();
-
-        List<string> tokens = new List<string>();
 
         public AppDelegate()
         {
@@ -27,27 +22,27 @@ namespace SlackStatusMenuMac
         public override void DidFinishLaunching(NSNotification notification)
         {
             var menu = new NSMenu();
-            this.statusItem.Title = count.ToString();
+            this.statusItem.Title = "-";
             this.statusItem.HighlightMode = true;
             this.statusItem.Image = this.slack0;
             this.statusItem.Menu = menu;
 
             var menuItem1 = new NSMenuItem
             {
-                Title = "Token",
-                Action = new ObjCRuntime.Selector("token:"),
-            };
-
-            var menuItem2 = new NSMenuItem
-            {
                 Title = "Start",
                 Action = new ObjCRuntime.Selector("start:"),
             };
 
-            var menuItem3 = new NSMenuItem
+            var menuItem2 = new NSMenuItem
             {
                 Title = "Slack",
                 Action = new ObjCRuntime.Selector("slack:"),
+            };
+
+            var menuItem3 = new NSMenuItem
+            {
+                Title = "Setting",
+                Action = new ObjCRuntime.Selector("setting:"),
             };
 
             var menuItem4 = new NSMenuItem
@@ -73,19 +68,6 @@ namespace SlackStatusMenuMac
         {
         }
 
-
-        [Export("quit:")]
-        private void quitExec(NSObject sender)
-        {
-            NSApplication.SharedApplication.Terminate(this);
-        }
-
-        [Export("token:")]
-        private void tokenExec(NSObject sender)
-        {
-            this.getTokens();
-        }
-
         [Export("start:")]
         private void startExec(NSObject sender)
         {
@@ -98,82 +80,75 @@ namespace SlackStatusMenuMac
             NSWorkspace.SharedWorkspace.LaunchApplication("Slack");
         }
 
+        [Export("setting:")]
+        private void settingExec(NSObject sender)
+        {
+            var window = new Forms.SettingWindowController();
+            window.ShowWindow(sender);
+        }
+
+        [Export("quit:")]
+        private void quitExec(NSObject sender)
+        {
+            NSApplication.SharedApplication.Terminate(this);
+        }
+
 
         private void getUnreadCount()
         {
-            count = 0;
+            var count = 0L;
+            var tokens = Slack.TokenUtil.LoadTokens();
 
-            foreach (var token in this.tokens)
+
+            try
             {
-                var client = new Slack.Client(token);
 
-                var list = client.GroupsList();
-                if (list.OK)
+                foreach (var token in tokens)
                 {
-                    foreach (var group in list.Groups)
+                    var client = new Slack.Client(token);
+
+                    var list = client.GroupsList();
+                    if (list.OK)
                     {
-                        var info = client.GroupsInfo(group.ID);
-                        if (info.OK)
+                        foreach (var group in list.Groups)
                         {
-                            count += info.Group.UnreadCountDisplay;
+                            var info = client.GroupsInfo(group.ID);
+                            if (info.OK)
+                            {
+                                count += info.Group.UnreadCountDisplay;
+                            }
+                            else
+                            {
+                                throw new ApplicationException(info.Error);
+                            }
                         }
                     }
+                    else
+                    {
+                        throw new ApplicationException(list.Error);
+                    }
                 }
+
+                InvokeOnMainThread(() =>
+                {
+                    this.statusItem.Title = count.ToString();
+                    if (0 < count)
+                    {
+                        this.statusItem.Image = this.slack1;
+                    }
+                    else
+                    {
+                        this.statusItem.Image = this.slack0;
+                    }
+                });
+
             }
-
-            InvokeOnMainThread(() =>
+            catch (Exception ex)
             {
-                this.statusItem.Title = this.count.ToString();
-                if (0 < this.count)
+                InvokeOnMainThread(() =>
                 {
-                    this.statusItem.Image = this.slack1;
-                }
-                else
-                {
-                    this.statusItem.Image = this.slack0;
-                }
-            });
-        }
-
-        private void getTokens()
-        {
-            
-            var query = new SecRecord(SecKind.GenericPassword)
-            {
-                Account = "tokens",
-                Service = "Slack Status Menu"
-            };
-
-            SecStatusCode status;
-            SecRecord record;
-
-            // Check item exists
-            record = SecKeyChain.QueryAsRecord(query, out status);
-            if (status == SecStatusCode.ItemNotFound)
-            {
-                record = new SecRecord(SecKind.GenericPassword)
-                {
-                    Account = "tokens",
-                    Service = "Slack Status Menu",
-                    ValueData = "[]"
-                };
-                var createdStatus = SecKeyChain.Add(record);
-                if (createdStatus != SecStatusCode.Success)
-                {
-                    throw new Exception(createdStatus.ToString());
-                }
-            }
-
-            // Get item value
-            record = SecKeyChain.QueryAsRecord(query, out status);
-            if (status == SecStatusCode.Success)
-            {
-                var data = record.ValueData;
-                Debug.WriteLine(data);
-
-                this.tokens = JsonConvert.DeserializeObject<List<string>>(data.ToString());
-            } else {
-                throw new Exception(status.ToString());
+                    this.statusItem.Title = ex.Message;
+                });
             }
         }
 
