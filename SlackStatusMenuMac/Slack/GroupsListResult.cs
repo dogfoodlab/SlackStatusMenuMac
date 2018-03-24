@@ -10,6 +10,9 @@ namespace SlackStatusMenuMac.Slack
         [JsonProperty("ok")]
         public bool OK { get; set; }
 
+        [JsonProperty("error")]
+        public string Error { get; set; }
+
         [JsonProperty("groups")]
         public List<Group> Groups { get; set; }
     }
