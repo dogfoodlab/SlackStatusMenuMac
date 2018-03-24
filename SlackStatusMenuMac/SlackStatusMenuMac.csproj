@@ -87,6 +87,7 @@
     <Compile Include="Slack\GroupsInfoResult.cs" />
     <Compile Include="Slack\GroupsListResult.cs" />
     <Compile Include="Slack\Client.cs" />
+    <Compile Include="Slack\TokenUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
