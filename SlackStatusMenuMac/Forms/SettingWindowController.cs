@@ -24,6 +24,7 @@ namespace SlackStatusMenuMac.Forms
         {
             base.AwakeFromNib();
 
+            Window.StyleMask = Window.StyleMask & ~NSWindowStyle.Resizable; 
             Window.Level = NSWindowLevel.Floating;
 
             var tokens = Slack.TokenUtil.LoadTokens();
