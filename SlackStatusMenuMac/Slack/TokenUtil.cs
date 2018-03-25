@@ -31,7 +31,6 @@ namespace SlackStatusMenuMac.Slack
             if (status == SecStatusCode.Success)
             {
                 var data = record.ValueData;
-                Debug.WriteLine(data);
 
                 var tokens = JsonConvert.DeserializeObject<List<string>>(data.ToString());
 

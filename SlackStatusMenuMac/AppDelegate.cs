@@ -1,6 +1,7 @@
 ﻿using AppKit;
 using Foundation;
 using System;
+using System.Threading.Tasks;
 
 namespace SlackStatusMenuMac
 {
@@ -11,7 +12,7 @@ namespace SlackStatusMenuMac
         NSImage slack0 = new NSImage("slack_0.png");
         NSImage slack1 = new NSImage("slack_1.png");
 
-        System.Timers.Timer timer = new System.Timers.Timer();
+        Forms.SettingWindowController settingWindow = new Forms.SettingWindowController();
 
         public AppDelegate()
         {
@@ -25,147 +26,111 @@ namespace SlackStatusMenuMac
             this.statusItem.Image = this.slack0;
             this.statusItem.Menu = menu;
 
-            var menuItem1 = new NSMenuItem
-            {
-                Title = "Start",
-                Action = new ObjCRuntime.Selector("start:"),
-            };
+            menu.AddItem(new NSMenuItem { Title = "Slack", Action = new ObjCRuntime.Selector("slack:") });
+            menu.AddItem(new NSMenuItem { Title = "Setting", Action = new ObjCRuntime.Selector("setting:") });
+            menu.AddItem(new NSMenuItem { Title = "Quit", Action = new ObjCRuntime.Selector("quit:") });
 
-            var menuItem2 = new NSMenuItem
-            {
-                Title = "Slack",
-                Action = new ObjCRuntime.Selector("slack:"),
-            };
-
-            var menuItem3 = new NSMenuItem
-            {
-                Title = "Setting",
-                Action = new ObjCRuntime.Selector("setting:"),
-            };
-
-            var menuItem4 = new NSMenuItem
-            {
-                Title = "Quit",
-                Action = new ObjCRuntime.Selector("quit:"),
-            };
-
-            menu.AddItem(menuItem1);
-            menu.AddItem(menuItem2);
-            menu.AddItem(menuItem3);
-            menu.AddItem(menuItem4);
-
-            this.timer.Interval = 20 * 1000;
-            this.timer.AutoReset = true;
-            this.timer.Elapsed += (s, e) =>
-            {
-                this.getUnreadCount();
-            };
+            this.getUnreadCountLoop();
         }
 
         public override void WillTerminate(NSNotification notification)
         {
         }
 
-        [Export("start:")]
-        private void startExec(NSObject sender)
-        {
-            this.timer.Start();
-        }
-
         [Export("slack:")]
-        private void slackExec(NSObject sender)
+        private void slackMenu(NSObject sender)
         {
             NSWorkspace.SharedWorkspace.LaunchApplication("Slack");
         }
 
         [Export("setting:")]
-        private void settingExec(NSObject sender)
+        private void settingMenu(NSObject sender)
         {
-            var window = new Forms.SettingWindowController();
-            window.ShowWindow(sender);
+            this.settingWindow.ShowWindow(sender);
         }
 
         [Export("quit:")]
-        private void quitExec(NSObject sender)
+        private void quitMenu(NSObject sender)
         {
             NSApplication.SharedApplication.Terminate(this);
         }
 
+        private async void getUnreadCountLoop()
+        {
+            while (true)
+            {
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        this.getUnreadCount();
+                    }
+                    catch (Exception ex)
+                    {
+                        InvokeOnMainThread(() =>
+                        {
+                            this.statusItem.Title = ex.Message;
+                        });
+                    }
+                    Task.Delay(20 * 1000);
+                });
+            }
+        }
 
         private void getUnreadCount()
         {
             var count = 0L;
             var tokens = Slack.TokenUtil.LoadTokens();
 
-            try
+            foreach (var token in tokens)
             {
-                foreach (var token in tokens)
+                var client = new Slack.Client(token);
+
+                var channelsList = client.ChannelsList();
+                if (channelsList.OK)
                 {
-                    var client = new Slack.Client(token);
-
-                    var channelsList = client.ChannelsList();
-                    if (channelsList.OK)
+                    foreach (var channel in channelsList.Channels)
                     {
-                        foreach (var channel in channelsList.Channels)
-                        {
-                            var info = client.ChannelsInfo(channel.ID);
-                            if (info.OK)
-                            {
-                                count += info.Channel.UnreadCountDisplay;
-                            }
-                            else
-                            {
-                                throw new ApplicationException(info.Error);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new ApplicationException(channelsList.Error);
-                    }
-
-                    var groupsList = client.GroupsList();
-                    if (groupsList.OK)
-                    {
-                        foreach (var group in groupsList.Groups)
-                        {
-                            var info = client.GroupsInfo(group.ID);
-                            if (info.OK)
-                            {
-                                count += info.Group.UnreadCountDisplay;
-                            }
-                            else
-                            {
-                                throw new ApplicationException(info.Error);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new ApplicationException(groupsList.Error);
+                        Task.Delay(500).Wait();
+                        var info = client.ChannelsInfo(channel.ID);
+                        if (info.OK) { count += info.Channel.UnreadCountDisplay; }
+                        else { throw new ApplicationException(info.Error); }
                     }
                 }
+                else
+                {
+                    throw new ApplicationException(channelsList.Error);
+                }
 
-                InvokeOnMainThread(() =>
+                var groupsList = client.GroupsList();
+                if (groupsList.OK)
                 {
-                    this.statusItem.Title = count.ToString();
-                    if (0 < count)
+                    foreach (var group in groupsList.Groups)
                     {
-                        this.statusItem.Image = this.slack1;
+                        Task.Delay(500).Wait();
+                        var info = client.GroupsInfo(group.ID);
+                        if (info.OK) { count += info.Group.UnreadCountDisplay; }
+                        else { throw new ApplicationException(info.Error); }
                     }
-                    else
-                    {
-                        this.statusItem.Image = this.slack0;
-                    }
-                });
+                }
+                else
+                {
+                    throw new ApplicationException(groupsList.Error);
+                }
             }
-            catch (Exception ex)
+
+            InvokeOnMainThread(() =>
             {
-                InvokeOnMainThread(() =>
+                this.statusItem.Title = count.ToString();
+                if (0 < count)
                 {
-                    this.statusItem.Title = ex.Message;
-                });
-            }
+                    this.statusItem.Image = this.slack1;
+                }
+                else
+                {
+                    this.statusItem.Image = this.slack0;
+                }
+            });
         }
 
 
