@@ -28,7 +28,7 @@ namespace SlackStatusMenuMac.Forms
 
             var tokens = Slack.TokenUtil.LoadTokens();
 
-            var text = string.Join("\n", tokens) + "\n";
+            var text = string.Join("\n", tokens) + (0 < tokens.Count ? "\n" : string.Empty);
 
             this.TokenTextView.InsertText(new NSString(text));
         }
