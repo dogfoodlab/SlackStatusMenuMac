@@ -46,18 +46,22 @@ namespace SlackStatusMenuMac.Forms
 
 		partial void OkButton_Click(Foundation.NSObject sender)
         {
-            var text = this.TokenTextView.String;
+            var text = this.TokenTextView.Value;
 
             var list = text.Trim().Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             var tokens = new List<string>(list);
 
             Slack.TokenUtil.SaveTokens(tokens);
 
+            this.TokenTextView.Value = string.Empty;
+
             this.Close();
         }
 
         partial void CancelButton_Click(NSObject sender)
         {
+            this.TokenTextView.Value = string.Empty;
+
             this.Close();
         }
 
