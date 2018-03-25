@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackStatusMenuMac", "SlackStatusMenuMac\SlackStatusMenuMac.csproj", "{543FAF53-BE1C-4B80-AB15-0253756B3FA4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{E4A79D2C-DAA8-40E8-9391-5C37C3321DA0}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{543FAF53-BE1C-4B80-AB15-0253756B3FA4}.Debug|x86.ActiveCfg = Debug|x86
+		{543FAF53-BE1C-4B80-AB15-0253756B3FA4}.Debug|x86.Build.0 = Debug|x86
+		{543FAF53-BE1C-4B80-AB15-0253756B3FA4}.Release|x86.ActiveCfg = Release|x86
+		{543FAF53-BE1C-4B80-AB15-0253756B3FA4}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+EndGlobal
