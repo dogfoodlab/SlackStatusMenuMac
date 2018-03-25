@@ -28,6 +28,36 @@ namespace SlackStatusMenuMac.Slack
         }
 
 
+        public ChannelsListResult ChannelsList(
+            bool exclude_archived = false,
+            bool exclude_members = false)
+        {
+            var client = this.build();
+            client.QueryString.Add("exclude_archived", exclude_archived.ToString());
+            client.QueryString.Add("exclude_members", exclude_members.ToString());
+
+            var response = client.DownloadString("channels.list");
+            var list = JsonConvert.DeserializeObject<ChannelsListResult>(response);
+
+            return list;
+        }
+
+
+        public ChannelsInfoResult ChannelsInfo(
+            string channel,
+            bool include_locale = false)
+        {
+            var client = this.build();
+            client.QueryString.Add("channel", channel);
+            client.QueryString.Add("include_locale", include_locale.ToString());
+
+            var response = client.DownloadString("channels.info");
+            var info = JsonConvert.DeserializeObject<ChannelsInfoResult>(response);
+
+            return info;
+        }
+
+
         public GroupsListResult GroupsList(
             bool exclude_archived = false,
             bool exclude_members = false)

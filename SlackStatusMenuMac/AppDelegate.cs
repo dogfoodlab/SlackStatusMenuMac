@@ -97,18 +97,37 @@ namespace SlackStatusMenuMac
             var count = 0L;
             var tokens = Slack.TokenUtil.LoadTokens();
 
-
             try
             {
-
                 foreach (var token in tokens)
                 {
                     var client = new Slack.Client(token);
 
-                    var list = client.GroupsList();
-                    if (list.OK)
+                    var channelsList = client.ChannelsList();
+                    if (channelsList.OK)
                     {
-                        foreach (var group in list.Groups)
+                        foreach (var channel in channelsList.Channels)
+                        {
+                            var info = client.ChannelsInfo(channel.ID);
+                            if (info.OK)
+                            {
+                                count += info.Channel.UnreadCountDisplay;
+                            }
+                            else
+                            {
+                                throw new ApplicationException(info.Error);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new ApplicationException(channelsList.Error);
+                    }
+
+                    var groupsList = client.GroupsList();
+                    if (groupsList.OK)
+                    {
+                        foreach (var group in groupsList.Groups)
                         {
                             var info = client.GroupsInfo(group.ID);
                             if (info.OK)
@@ -123,7 +142,7 @@ namespace SlackStatusMenuMac
                     }
                     else
                     {
-                        throw new ApplicationException(list.Error);
+                        throw new ApplicationException(groupsList.Error);
                     }
                 }
 
@@ -139,7 +158,6 @@ namespace SlackStatusMenuMac
                         this.statusItem.Image = this.slack0;
                     }
                 });
-
             }
             catch (Exception ex)
             {

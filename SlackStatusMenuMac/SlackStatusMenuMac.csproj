@@ -97,6 +97,9 @@
       <DependentUpon>SettingWindowController.cs</DependentUpon>
     </Compile>
     <Compile Include="Slack\TokenUtil.cs" />
+    <Compile Include="Slack\Channel.cs" />
+    <Compile Include="Slack\ChannelsInfoResult.cs" />
+    <Compile Include="Slack\ChannelsListResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
