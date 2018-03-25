@@ -5,8 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackStatusMenuMac", "Slack
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{E4A79D2C-DAA8-40E8-9391-5C37C3321DA0}"
 	ProjectSection(SolutionItems) = preProject
-		LICENSE.txt = LICENSE.txt
 		README.md = README.md
+		LICENSE = LICENSE
 	EndProjectSection
 EndProject
 Global
