@@ -8,7 +8,7 @@ Slack Status Menu for Mac is display the number of Slack unread count on Mac sta
 * Slack app on Mac App Store (optional)
 
 ## Usage
-1. Launch SlackStatusMenu.app
+1. Launch SlackStatusMenu.app
 2. Open setting window (in status menu)
 3. Enter Slack API token and press OK (token per line)
 
