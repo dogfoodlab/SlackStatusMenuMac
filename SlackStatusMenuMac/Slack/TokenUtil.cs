@@ -1,6 +1,7 @@
 ﻿using Security;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Newtonsoft.Json;
 
 namespace SlackStatusMenuMac.Slack
@@ -37,7 +38,7 @@ namespace SlackStatusMenuMac.Slack
             }
             else
             {
-                throw new Exception(status.ToString());
+                throw new IOException(status.ToString());
             }
         }
 
@@ -52,8 +53,9 @@ namespace SlackStatusMenuMac.Slack
 
             var status = SecKeyChain.Update(record, record);
 
-            if (status != SecStatusCode.Success) {
-                throw new ApplicationException(status.ToString());
+            if (status != SecStatusCode.Success)
+            {
+                throw new IOException(status.ToString());
             }
         }
 
@@ -69,7 +71,8 @@ namespace SlackStatusMenuMac.Slack
 
             var record = SecKeyChain.QueryAsRecord(query, out status);
 
-            if (status == SecStatusCode.Success) {
+            if (status == SecStatusCode.Success)
+            {
                 return true;
             }
 
@@ -78,7 +81,7 @@ namespace SlackStatusMenuMac.Slack
                 return false;
             }
 
-            throw new ApplicationException(status.ToString());
+            throw new IOException(status.ToString());
         }
 
         private static void CreateEmptySetting()
@@ -94,7 +97,7 @@ namespace SlackStatusMenuMac.Slack
 
             if (status != SecStatusCode.Success)
             {
-                throw new Exception(status.ToString());
+                throw new IOException(status.ToString());
             }
         }
 

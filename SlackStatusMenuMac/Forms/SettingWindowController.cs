@@ -24,7 +24,7 @@ namespace SlackStatusMenuMac.Forms
         {
             base.AwakeFromNib();
 
-            Window.StyleMask = Window.StyleMask & ~NSWindowStyle.Resizable; 
+            Window.StyleMask = Window.StyleMask & ~NSWindowStyle.Resizable;
             Window.Level = NSWindowLevel.Floating;
         }
 
@@ -33,22 +33,22 @@ namespace SlackStatusMenuMac.Forms
             get { return (SettingWindow)base.Window; }
         }
 
-		public override void ShowWindow(NSObject sender)
-		{
+        public override void ShowWindow(NSObject sender)
+        {
             base.ShowWindow(sender);
 
             var tokens = Slack.TokenUtil.LoadTokens();
             var text = string.Join("\n", tokens) + (0 < tokens.Count ? "\n" : string.Empty);
 
             this.TokenTextView.Value = text;
-		}
+        }
 
 
-		partial void OkButton_Click(Foundation.NSObject sender)
+        partial void OkButton_Click(Foundation.NSObject sender)
         {
             var text = this.TokenTextView.Value;
 
-            var list = text.Trim().Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            var list = text.Trim().Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             var tokens = new List<string>(list);
 
             Slack.TokenUtil.SaveTokens(tokens);
