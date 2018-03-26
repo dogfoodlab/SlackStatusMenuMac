@@ -14,8 +14,8 @@ namespace SlackStatusMenuMac
         private NSImage slack0 = new NSImage("slack.png").SetTemplate();
         private NSImage slack1 = new NSImage("slack.png").TintColor(NSColor.FromRgb(1.0f, 0.5f, 0.5f));
 
-        private int LOOP_WAIT = 30 * 1000;
-        private int INFO_CALL_WAIT = 1 * 1000;
+        private const int LOOP_WAIT = 25 * 1000;
+        private const int INFO_CALL_WAIT = 800;
 
         public AppDelegate()
         {
