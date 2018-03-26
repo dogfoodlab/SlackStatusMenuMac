@@ -1,5 +1,8 @@
 ﻿# Slack Status Menu for Mac
 
+![No unread](images/image01.png)
+![Have unread](images/image02.png)
+
 ## About app
 Slack Status Menu for Mac is display the number of Slack unread count on Mac status menu.
 
