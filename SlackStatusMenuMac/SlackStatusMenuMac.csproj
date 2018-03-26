@@ -71,6 +71,7 @@
     <Folder Include="Resources\" />
     <Folder Include="Slack\" />
     <Folder Include="Forms\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -100,6 +101,7 @@
     <Compile Include="Slack\Channel.cs" />
     <Compile Include="Slack\ChannelsInfoResult.cs" />
     <Compile Include="Slack\ChannelsListResult.cs" />
+    <Compile Include="Extensions\NSImageExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
