@@ -9,10 +9,10 @@ namespace SlackStatusMenuMac
     [Register("AppDelegate")]
     public class AppDelegate : NSApplicationDelegate
     {
-        NSStatusItem statusItem = NSStatusBar.SystemStatusBar.CreateStatusItem(NSStatusItemLength.Variable);
-        NSWindowController settingWindow = new Forms.SettingWindowController();
-        NSImage slack0 = new NSImage("slack.png");
-        NSImage slack1 = new NSImage("slack.png").TintColor(NSColor.FromRgb(1.0f, 0.5f, 0.5f));
+        private NSStatusItem statusItem = NSStatusBar.SystemStatusBar.CreateStatusItem(NSStatusItemLength.Variable);
+        private NSWindowController settingWindow = new Forms.SettingWindowController();
+        private NSImage slack0 = new NSImage("slack.png");
+        private NSImage slack1 = new NSImage("slack.png").TintColor(NSColor.FromRgb(1.0f, 0.5f, 0.5f));
 
         public AppDelegate()
         {
