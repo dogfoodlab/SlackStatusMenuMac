@@ -2,6 +2,7 @@
 using Foundation;
 using System;
 using System.Threading.Tasks;
+using SlackStatusMenuMac.Extensions;
 
 namespace SlackStatusMenuMac
 {
@@ -10,15 +11,22 @@ namespace SlackStatusMenuMac
     {
         NSStatusItem statusItem = NSStatusBar.SystemStatusBar.CreateStatusItem(NSStatusItemLength.Variable);
         NSWindowController settingWindow = new Forms.SettingWindowController();
-        NSImage slack0 = new NSImage("slack_0.png");
-        NSImage slack1 = new NSImage("slack_1.png");
+        NSImage slack0 = new NSImage("slack.png");
+        NSImage slack1 = new NSImage("slack.png").TintColor(NSColor.FromRgb(1.0f, 0.5f, 0.5f));
 
         public AppDelegate()
         {
         }
 
+        public override void WillFinishLaunching(NSNotification notification)
+        {
+            NSApplication.SharedApplication.ActivationPolicy = NSApplicationActivationPolicy.Accessory;
+        }
+
         public override void DidFinishLaunching(NSNotification notification)
         {
+            this.slack0.Template = true;
+
             var menu = new NSMenu();
             this.statusItem.Title = "-";
             this.statusItem.HighlightMode = true;

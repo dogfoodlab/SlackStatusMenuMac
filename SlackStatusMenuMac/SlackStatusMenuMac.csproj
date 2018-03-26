@@ -108,8 +108,6 @@
     <InterfaceDefinition Include="Forms\SettingWindow.xib" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\slack_0.png" />
-    <BundleResource Include="Resources\slack_1.png" />
     <BundleResource Include="Resources\slack.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
