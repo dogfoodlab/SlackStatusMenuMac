@@ -21,13 +21,9 @@ namespace SlackStatusMenuMac
         {
         }
 
-        public override void WillFinishLaunching(NSNotification notification)
-        {
-            NSApplication.SharedApplication.ActivationPolicy = NSApplicationActivationPolicy.Accessory;
-        }
-
         public override void DidFinishLaunching(NSNotification notification)
         {
+            NSApplication.SharedApplication.ActivationPolicy = NSApplicationActivationPolicy.Accessory;
 
             var menu = new NSMenu();
             this.statusItem.Title = "-";
