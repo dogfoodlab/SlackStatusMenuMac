@@ -50,7 +50,7 @@
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.Mac" />
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +71,7 @@
     <Folder Include="Resources\" />
     <Folder Include="Slack\" />
     <Folder Include="Forms\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -100,14 +101,14 @@
     <Compile Include="Slack\Channel.cs" />
     <Compile Include="Slack\ChannelsInfoResult.cs" />
     <Compile Include="Slack\ChannelsListResult.cs" />
+    <Compile Include="Extensions\NSImageExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
     <InterfaceDefinition Include="Forms\SettingWindow.xib" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\slack_0.png" />
-    <BundleResource Include="Resources\slack_1.png" />
+    <BundleResource Include="Resources\slack.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>

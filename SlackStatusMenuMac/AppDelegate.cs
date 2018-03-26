@@ -2,17 +2,20 @@
 using Foundation;
 using System;
 using System.Threading.Tasks;
+using SlackStatusMenuMac.Extensions;
 
 namespace SlackStatusMenuMac
 {
     [Register("AppDelegate")]
     public class AppDelegate : NSApplicationDelegate
     {
-        NSStatusItem statusItem = NSStatusBar.SystemStatusBar.CreateStatusItem(NSStatusItemLength.Variable);
-        NSImage slack0 = new NSImage("slack_0.png");
-        NSImage slack1 = new NSImage("slack_1.png");
+        private NSStatusItem statusItem = NSStatusBar.SystemStatusBar.CreateStatusItem(NSStatusItemLength.Variable);
+        private NSWindowController settingWindow = new Forms.SettingWindowController();
+        private NSImage slack0 = new NSImage("slack.png").SetTemplate();
+        private NSImage slack1 = new NSImage("slack.png").TintColor(NSColor.FromRgb(0.3f, 0.6f, 0.5f));
 
-        Forms.SettingWindowController settingWindow = new Forms.SettingWindowController();
+        private const int LOOP_WAIT = 25 * 1000;
+        private const int INFO_CALL_WAIT = 800;
 
         public AppDelegate()
         {
@@ -20,6 +23,8 @@ namespace SlackStatusMenuMac
 
         public override void DidFinishLaunching(NSNotification notification)
         {
+            NSApplication.SharedApplication.ActivationPolicy = NSApplicationActivationPolicy.Accessory;
+
             var menu = new NSMenu();
             this.statusItem.Title = "-";
             this.statusItem.HighlightMode = true;
@@ -72,7 +77,7 @@ namespace SlackStatusMenuMac
                             this.statusItem.Title = ex.Message;
                         });
                     }
-                    Task.Delay(20 * 1000);
+                    Task.Delay(LOOP_WAIT);
                 });
             }
         }
@@ -91,7 +96,7 @@ namespace SlackStatusMenuMac
                 {
                     foreach (var channel in channelsList.Channels)
                     {
-                        Task.Delay(500).Wait();
+                        Task.Delay(INFO_CALL_WAIT).Wait();
                         var info = client.ChannelsInfo(channel.ID);
                         if (info.OK) { count += info.Channel.UnreadCountDisplay; }
                         else { throw new ApplicationException(info.Error); }
@@ -107,7 +112,7 @@ namespace SlackStatusMenuMac
                 {
                     foreach (var group in groupsList.Groups)
                     {
-                        Task.Delay(500).Wait();
+                        Task.Delay(INFO_CALL_WAIT).Wait();
                         var info = client.GroupsInfo(group.ID);
                         if (info.OK) { count += info.Group.UnreadCountDisplay; }
                         else { throw new ApplicationException(info.Error); }
