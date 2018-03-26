@@ -9,6 +9,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{E4A79D2C
 		LICENSE = LICENSE
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{D08BF7AD-0F5B-49BD-93C8-D43FE8B4571A}"
+	ProjectSection(SolutionItems) = preProject
+		images\image01.png = images\image01.png
+		images\image02.png = images\image02.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -19,5 +25,8 @@ Global
 		{543FAF53-BE1C-4B80-AB15-0253756B3FA4}.Debug|x86.Build.0 = Debug|x86
 		{543FAF53-BE1C-4B80-AB15-0253756B3FA4}.Release|x86.ActiveCfg = Release|x86
 		{543FAF53-BE1C-4B80-AB15-0253756B3FA4}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D08BF7AD-0F5B-49BD-93C8-D43FE8B4571A} = {E4A79D2C-DAA8-40E8-9391-5C37C3321DA0}
 	EndGlobalSection
 EndGlobal
