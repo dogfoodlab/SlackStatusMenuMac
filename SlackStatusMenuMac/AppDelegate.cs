@@ -11,7 +11,7 @@ namespace SlackStatusMenuMac
     {
         private NSStatusItem statusItem = NSStatusBar.SystemStatusBar.CreateStatusItem(NSStatusItemLength.Variable);
         private NSWindowController settingWindow = new Forms.SettingWindowController();
-        private NSImage slack0 = new NSImage("slack.png");
+        private NSImage slack0 = new NSImage("slack.png").SetTemplate();
         private NSImage slack1 = new NSImage("slack.png").TintColor(NSColor.FromRgb(1.0f, 0.5f, 0.5f));
 
         private int LOOP_WAIT = 30 * 1000;
@@ -28,7 +28,6 @@ namespace SlackStatusMenuMac
 
         public override void DidFinishLaunching(NSNotification notification)
         {
-            this.slack0.Template = true;
 
             var menu = new NSMenu();
             this.statusItem.Title = "-";
