@@ -23,6 +23,12 @@ namespace SlackStatusMenuMac.Extensions
             return image;
         }
 
+        public static NSImage SetTemplate(this NSImage image)
+        {
+            image.Template = true;
+            return image;
+        }
+
 
     }
 }
