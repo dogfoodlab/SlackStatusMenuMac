@@ -14,6 +14,9 @@ namespace SlackStatusMenuMac
         private NSImage slack0 = new NSImage("slack.png");
         private NSImage slack1 = new NSImage("slack.png").TintColor(NSColor.FromRgb(1.0f, 0.5f, 0.5f));
 
+        private int LOOP_WAIT = 30 * 1000;
+        private int INFO_CALL_WAIT = 1 * 1000;
+
         public AppDelegate()
         {
         }
@@ -79,7 +82,7 @@ namespace SlackStatusMenuMac
                             this.statusItem.Title = ex.Message;
                         });
                     }
-                    Task.Delay(20 * 1000);
+                    Task.Delay(LOOP_WAIT);
                 });
             }
         }
@@ -98,7 +101,7 @@ namespace SlackStatusMenuMac
                 {
                     foreach (var channel in channelsList.Channels)
                     {
-                        Task.Delay(500).Wait();
+                        Task.Delay(INFO_CALL_WAIT).Wait();
                         var info = client.ChannelsInfo(channel.ID);
                         if (info.OK) { count += info.Channel.UnreadCountDisplay; }
                         else { throw new ApplicationException(info.Error); }
@@ -114,7 +117,7 @@ namespace SlackStatusMenuMac
                 {
                     foreach (var group in groupsList.Groups)
                     {
-                        Task.Delay(500).Wait();
+                        Task.Delay(INFO_CALL_WAIT).Wait();
                         var info = client.GroupsInfo(group.ID);
                         if (info.OK) { count += info.Group.UnreadCountDisplay; }
                         else { throw new ApplicationException(info.Error); }
