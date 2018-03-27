@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace SlackStatusMenuMac.Slack
@@ -13,9 +14,9 @@ namespace SlackStatusMenuMac.Slack
         public string Name { get; set; }
 
         [JsonProperty("unread_count")]
-        public long UnreadCount { get; set; }
+        public int UnreadCount { get; set; }
 
         [JsonProperty("unread_count_display")]
-        public long UnreadCountDisplay { get; set; }
+        public int UnreadCountDisplay { get; set; }
     }
 }

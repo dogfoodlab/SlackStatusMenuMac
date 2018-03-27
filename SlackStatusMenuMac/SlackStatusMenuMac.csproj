@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -72,6 +71,8 @@
     <Folder Include="Slack\" />
     <Folder Include="Forms\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Views\" />
+    <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -101,11 +102,40 @@
     <Compile Include="Slack\Channel.cs" />
     <Compile Include="Slack\ChannelsInfoResult.cs" />
     <Compile Include="Slack\ChannelsListResult.cs" />
-    <Compile Include="Extensions\NSImageExtension.cs" />
+    <Compile Include="Extensions\NSImageExtensions.cs" />
+    <Compile Include="Views\PopoverView.cs" />
+    <Compile Include="Views\PopoverViewController.cs" />
+    <Compile Include="Views\PopoverView.designer.cs">
+      <DependentUpon>PopoverView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PopoverViewController.designer.cs">
+      <DependentUpon>PopoverViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MessageTableCellView.cs" />
+    <Compile Include="Views\MessageTableCellViewController.cs" />
+    <Compile Include="Views\MessageTableCellView.designer.cs">
+      <DependentUpon>MessageTableCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MessageTableCellViewController.designer.cs">
+      <DependentUpon>MessageTableCellViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Slack\GroupHistoryResult.cs" />
+    <Compile Include="Slack\Message.cs" />
+    <Compile Include="Slack\AbstractResult.cs" />
+    <Compile Include="Slack\SlackDateTimeConverter.cs" />
+    <Compile Include="Data\AbstractTableViewSource.cs" />
+    <Compile Include="Views\MessageTableViewSource.cs" />
+    <Compile Include="Slack\Attachment.cs" />
+    <Compile Include="Slack\ChannelsHistoryResult.cs" />
+    <Compile Include="Slack\User.cs" />
+    <Compile Include="Slack\Profile.cs" />
+    <Compile Include="Slack\UsersInfoResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
     <InterfaceDefinition Include="Forms\SettingWindow.xib" />
+    <InterfaceDefinition Include="Views\PopoverView.xib" />
+    <InterfaceDefinition Include="Views\MessageTableCellView.xib" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\slack.png" />

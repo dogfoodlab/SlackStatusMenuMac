@@ -1,8 +1,12 @@
 ﻿using AppKit;
 using Foundation;
+using CoreGraphics;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SlackStatusMenuMac.Extensions;
+using SlackStatusMenuMac.Views;
 
 namespace SlackStatusMenuMac
 {
@@ -10,9 +14,10 @@ namespace SlackStatusMenuMac
     public class AppDelegate : NSApplicationDelegate
     {
         private NSStatusItem statusItem = NSStatusBar.SystemStatusBar.CreateStatusItem(NSStatusItemLength.Variable);
-        private NSWindowController settingWindow = new Forms.SettingWindowController();
         private NSImage slack0 = new NSImage("slack.png").SetTemplate();
         private NSImage slack1 = new NSImage("slack.png").TintColor(NSColor.FromRgb(0.3f, 0.6f, 0.5f));
+        private NSPopover popover = new NSPopover();
+        private PopoverViewController popoverViewController = new PopoverViewController();
 
         private const int LOOP_WAIT = 25 * 1000;
         private const int INFO_CALL_WAIT = 800;
@@ -25,42 +30,62 @@ namespace SlackStatusMenuMac
         {
             NSApplication.SharedApplication.ActivationPolicy = NSApplicationActivationPolicy.Accessory;
 
-            var menu = new NSMenu();
             this.statusItem.Title = "-";
             this.statusItem.HighlightMode = true;
             this.statusItem.Image = this.slack0;
-            this.statusItem.Menu = menu;
+            this.popover.ContentViewController = this.popoverViewController;
 
-            menu.AddItem(new NSMenuItem { Title = "Slack", Action = new ObjCRuntime.Selector("slack:") });
-            menu.AddItem(new NSMenuItem { Title = "Setting", Action = new ObjCRuntime.Selector("setting:") });
-            menu.AddItem(new NSMenuItem { Title = "Quit", Action = new ObjCRuntime.Selector("quit:") });
+            //this.statusItem.Button.Action = new ObjCRuntime.Selector("popover:");
 
-            this.getUnreadCountLoop();
+            NSEvent.AddLocalMonitorForEventsMatchingMask(
+                NSEventMask.LeftMouseDown | NSEventMask.RightMouseDown, (evt) =>
+            {
+                if (this.statusItem.Button.Bounds.Contains(evt.LocationInWindow) == true)
+                {
+                    if (this.statusItem.Button.Highlighted == false)
+                    {
+                        this.statusItem.Button.Highlight(true);
+                        this.popover.Show(CGRect.Empty, this.statusItem.Button, NSRectEdge.MinYEdge);
+                    }
+                    else
+                    {
+                        this.popover.Close();
+                        this.statusItem.Button.Highlight(false);
+                    }
+                    return null;
+                }
+                return evt;
+            });
+
+            /*
+            NSEvent.AddGlobalMonitorForEventsMatchingMask(
+                NSEventMask.LeftMouseDown | NSEventMask.RightMouseDown, (evt) =>
+            {
+                this.popover.Close();
+                this.statusItem.Button.Highlight(false);
+            });
+            */
+
+            this.getSlackMessagesLoop();
         }
 
         public override void WillTerminate(NSNotification notification)
         {
         }
 
-        [Export("slack:")]
-        private void slackMenu(NSObject sender)
+        /*
+        [Export("popover:")]
+        private void popoverAction(NSObject sender)
         {
-            NSWorkspace.SharedWorkspace.LaunchApplication("Slack");
+            if (this.popover.Shown == false) {
+                this.popover.Show(CGRect.Empty, this.statusItem.Button, NSRectEdge.MinYEdge);    
+            } else {
+                this.popover.Close();
+            }
         }
+        */
 
-        [Export("setting:")]
-        private void settingMenu(NSObject sender)
-        {
-            this.settingWindow.ShowWindow(sender);
-        }
-
-        [Export("quit:")]
-        private void quitMenu(NSObject sender)
-        {
-            NSApplication.SharedApplication.Terminate(this);
-        }
-
-        private async void getUnreadCountLoop()
+        private async void getSlackMessagesLoop()
         {
             while (true)
             {
@@ -68,7 +93,7 @@ namespace SlackStatusMenuMac
                 {
                     try
                     {
-                        this.getUnreadCount();
+                        this.getSlackMessages();
                     }
                     catch (Exception ex)
                     {
@@ -82,10 +107,11 @@ namespace SlackStatusMenuMac
             }
         }
 
-        private void getUnreadCount()
+        private void getSlackMessages()
         {
-            var count = 0L;
             var tokens = Slack.TokenUtil.LoadTokens();
+            var messages = new List<Slack.Message>();
+            var count = 0;
 
             foreach (var token in tokens)
             {
@@ -97,9 +123,32 @@ namespace SlackStatusMenuMac
                     foreach (var channel in channelsList.Channels)
                     {
                         Task.Delay(INFO_CALL_WAIT).Wait();
-                        var info = client.ChannelsInfo(channel.ID);
-                        if (info.OK) { count += info.Channel.UnreadCountDisplay; }
-                        else { throw new ApplicationException(info.Error); }
+                        var history = client.ChannelHistory(channel.ID, count: 10, unreads: true);
+                        if (history.OK == true)
+                        {
+                            count += history.UnreadCountDisplay;
+
+                            foreach (var message in messages)
+                            {
+                                if (message.User == null) { continue; }
+                                var info = client.UsersInfo(message.User);
+                                if (info.OK == true)
+                                {
+                                    message.UserRef = info.User;
+                                }
+                                else
+                                {
+                                    throw new ApplicationException(info.Error);
+                                }
+                            }
+
+                            //history.Messages = history.Messages.Take(history.UnreadCountDisplay).ToList();
+                            messages.AddRange(history.Messages);
+                        }
+                        else
+                        {
+                            throw new ApplicationException(history.Error);
+                        }
                     }
                 }
                 else
@@ -113,9 +162,28 @@ namespace SlackStatusMenuMac
                     foreach (var group in groupsList.Groups)
                     {
                         Task.Delay(INFO_CALL_WAIT).Wait();
-                        var info = client.GroupsInfo(group.ID);
-                        if (info.OK) { count += info.Group.UnreadCountDisplay; }
-                        else { throw new ApplicationException(info.Error); }
+                        var history = client.GroupsHistory(group.ID, count: 10, unreads: true);
+                        if (history.OK == true)
+                        {
+                            count += history.UnreadCountDisplay;
+
+                            foreach (var message in messages)
+                            {
+                                if (message.User == null) { continue; }
+                                var info = client.UsersInfo(message.User);
+                                if (info.OK == true)
+                                {
+                                    message.UserRef = info.User;
+                                }
+                                else
+                                {
+                                    throw new ApplicationException(info.Error);
+                                }
+                            }
+
+                            //history.Messages = history.Messages.Take(history.UnreadCountDisplay).ToList();
+                            messages.AddRange(history.Messages);
+                        }
                     }
                 }
                 else
@@ -127,14 +195,11 @@ namespace SlackStatusMenuMac
             InvokeOnMainThread(() =>
             {
                 this.statusItem.Title = count.ToString();
-                if (0 < count)
-                {
-                    this.statusItem.Image = this.slack1;
-                }
-                else
-                {
-                    this.statusItem.Image = this.slack0;
-                }
+                if (0 < count) { this.statusItem.Image = this.slack1; }
+                else { this.statusItem.Image = this.slack0; }
+
+                messages = messages.OrderByDescending(x => x.Ts).ToList();
+                this.popoverViewController.SetMessages(messages);
             });
         }
 

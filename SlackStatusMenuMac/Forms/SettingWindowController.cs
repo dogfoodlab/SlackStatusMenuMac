@@ -7,6 +7,8 @@ namespace SlackStatusMenuMac.Forms
 {
     public partial class SettingWindowController : NSWindowController
     {
+        #region Constructors
+
         public SettingWindowController(IntPtr handle) : base(handle)
         {
         }
@@ -20,47 +22,50 @@ namespace SlackStatusMenuMac.Forms
         {
         }
 
-        public override void AwakeFromNib()
-        {
-            base.AwakeFromNib();
+        #endregion
 
+        public new SettingWindow Window => (SettingWindow)base.Window;
+
+		public override void WindowDidLoad()
+		{
+            base.WindowDidLoad();
             Window.StyleMask = Window.StyleMask & ~NSWindowStyle.Resizable;
-            Window.Level = NSWindowLevel.Floating;
-        }
+            Window.Level = NSWindowLevel.ScreenSaver;
+            //Window.Level = NSWindowLevel.Floating;
 
-        public new SettingWindow Window
-        {
-            get { return (SettingWindow)base.Window; }
-        }
+            this.okButton.Action = new ObjCRuntime.Selector("ok:");
+            this.cancelButton.Action = new ObjCRuntime.Selector("cancel:");
+		}
 
-        public override void ShowWindow(NSObject sender)
+		public override void ShowWindow(NSObject sender)
         {
             base.ShowWindow(sender);
 
             var tokens = Slack.TokenUtil.LoadTokens();
             var text = string.Join("\n", tokens) + (0 < tokens.Count ? "\n" : string.Empty);
 
-            this.TokenTextView.Value = text;
+            this.slackTokensTextView.Value = text;
         }
 
-
-        partial void OkButton_Click(Foundation.NSObject sender)
+        [Export("ok:")]
+        private void okAction(NSObject sender)
         {
-            var text = this.TokenTextView.Value;
+            var text = this.slackTokensTextView.Value;
 
             var list = text.Trim().Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             var tokens = new List<string>(list);
 
             Slack.TokenUtil.SaveTokens(tokens);
 
-            this.TokenTextView.Value = string.Empty;
+            this.slackTokensTextView.Value = string.Empty;
 
             this.Close();
         }
 
-        partial void CancelButton_Click(NSObject sender)
+        [Export("cancel:")]
+        private void cancelAction(NSObject sender)
         {
-            this.TokenTextView.Value = string.Empty;
+            this.slackTokensTextView.Value = string.Empty;
 
             this.Close();
         }

@@ -5,7 +5,7 @@ using System;
 
 namespace SlackStatusMenuMac.Extensions
 {
-    public static class NSImageExtension
+    public static class NSImageExtensions
     {
         public static NSImage TintColor(this NSImage image, NSColor color)
         {

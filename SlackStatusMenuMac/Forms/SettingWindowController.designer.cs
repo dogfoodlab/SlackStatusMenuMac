@@ -9,40 +9,34 @@ using System.CodeDom.Compiler;
 
 namespace SlackStatusMenuMac.Forms
 {
-    [Register ("SettingWindowController")]
-    partial class SettingWindowController
-    {
-        [Outlet]
-        AppKit.NSButton CancelButton { get; set; }
+	[Register ("SettingWindowController")]
+	partial class SettingWindowController
+	{
+		[Outlet]
+		AppKit.NSButton cancelButton { get; set; }
 
-        [Outlet]
-        AppKit.NSButton OkButton { get; set; }
+		[Outlet]
+		AppKit.NSButton okButton { get; set; }
 
-        [Outlet]
-        AppKit.NSTextView TokenTextView { get; set; }
+		[Outlet]
+		AppKit.NSTextView slackTokensTextView { get; set; }
+		
+		void ReleaseDesignerOutlets ()
+		{
+			if (slackTokensTextView != null) {
+				slackTokensTextView.Dispose ();
+				slackTokensTextView = null;
+			}
 
-        [Action ("CancelButton_Click:")]
-        partial void CancelButton_Click (Foundation.NSObject sender);
+			if (okButton != null) {
+				okButton.Dispose ();
+				okButton = null;
+			}
 
-        [Action ("OkButton_Click:")]
-        partial void OkButton_Click (Foundation.NSObject sender);
-        
-        void ReleaseDesignerOutlets ()
-        {
-            if (CancelButton != null) {
-                CancelButton.Dispose ();
-                CancelButton = null;
-            }
-
-            if (OkButton != null) {
-                OkButton.Dispose ();
-                OkButton = null;
-            }
-
-            if (TokenTextView != null) {
-                TokenTextView.Dispose ();
-                TokenTextView = null;
-            }
-        }
-    }
+			if (cancelButton != null) {
+				cancelButton.Dispose ();
+				cancelButton = null;
+			}
+		}
+	}
 }

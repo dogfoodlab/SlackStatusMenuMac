@@ -5,9 +5,9 @@ using Newtonsoft.Json;
 namespace SlackStatusMenuMac.Slack
 {
     [JsonObject]
-    public class GroupsInfoResult : AbstractResult
+    public class UsersInfoResult : AbstractResult
     {
-        [JsonProperty("group")]
-        public Group Group { get; set; }
+        [JsonProperty("user")]
+        public User User { get; set; }
     }
 }
